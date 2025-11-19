@@ -1,71 +1,589 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-Powered Sentiment Analyzer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analyseur de Sentiment IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6c5ce7;
+            --bg: #ffffff;
+            --surface: #fafbff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --positive: #10b981;
+            --neutral: #f59e0b;
+            --negative: #ef4444;
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 1rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: var(--radius);
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .main-content { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-upload-area {
+            margin-bottom: 1rem;
+        }
+
+        .file-label {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .file-label:hover {
+            background: #4338ca;
+        }
+
+        .file-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            color: var(--text);
+            resize: vertical;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: #e2e8f0; }
+
+        /* ... (les autres styles restent inchangés : historique, résultat, etc.) */
+
+        /* Copiez-collez ici tout le reste du CSS de votre version claire précédente, de .history-list jusqu'à la fin du style */
+        /* Pour gagner de la place, je ne le répète pas, mais vous le gardez ! */
+        
+        .history-list {
+            max-height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            flex: 1;
+        }
+
+        .history-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item:last-child {
+            border: none;
+        }
+
+        .history-item:hover {
+            background: #f8fafc;
+            transform: translateX(5px);
+        }
+
+        .history-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .history-meta {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .sentiment-tag {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--positive);
+            border: 1px solid var(--positive);
+        }
+
+        .neutral {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--neutral);
+            border: 1px solid var(--neutral);
+        }
+
+        .negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--negative);
+            border: 1px solid var(--negative);
+        }
+
+        .lang-tag {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .result-card {
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sentiment-emoji {
+            font-size: 4rem;
+            margin: 0.5rem 0;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .sentiment-label {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .sentiment-score {
+            color: var(--text-muted);
+            margin: 0.5rem 0 1rem;
+            font-size: 0.9rem;
+        }
+
+        .score-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .score-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--positive), var(--neutral), var(--negative));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .language-info {
+            background: rgba(79, 70, 229, 0.05);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-top: 0.5rem;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--negative);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            display: none;
+            border-left: 4px solid var(--negative);
+        }
+
+        .error.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            background: white;
+            border-radius: var(--radius);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .header-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .clear-all-btn {
+            background: none;
+            color: var(--negative);
+            border: 1px solid var(--negative);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .clear-all-btn:hover {
+            background: var(--negative);
+            color: white;
+        }
+    </style>
 </head>
-
 <body>
-  <header style="text-align: center;">
-    <h1><i class="fas fa-magic"></i> AI-Powered Sentiment Analyzer</h1>
-    <p class="subtitle">Une plateforme intelligente pour détecter et comprendre les émotions dans plusieurs langues.</p>
-  </header>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-brain header-icon"></i> Analyseur de Sentiment IA</h1>
+            <p class="subtitle">Détection de sentiment en plusieurs langues</p>
+        </header>
 
-  <div class="container">
+        <div class="main-content">
+            <div class="card">
+                <!-- Upload de fichier -->
+                <div class="file-upload-area">
+                    <label for="file-upload" class="file-label">
+                        <i class="fas fa-file-upload"></i> Choisir un document
+                    </label>
+                    <input type="file" id="file-upload" accept=".txt,.pdf,.docx" style="display: none;" />
+                    <div class="file-info" id="file-name">Aucun fichier sélectionné</div>
+                </div>
 
-    <!-- Zone d'analyse -->
-    <div class="card">
-      <label for="input-text">💬 Entrez un texte à analyser</label>
-      <textarea id="input-text" placeholder="Exemple : J'adore ce produit ! It's simply amazing."></textarea>
-      <div class="btn-group">
-        <button id="analyze-btn" class="btn-primary">
-          <i class="fas fa-magic"></i> Analyser
-        </button>
-        <button id="clear-btn" class="btn-secondary">
-          <i class="fas fa-trash"></i> Effacer
-        </button>
-      </div>
+                <!-- Saisie manuelle -->
+                <label for="input-text">Ou saisissez du texte :</label>
+                <textarea id="input-text" placeholder="Exemple : J'adore ce produit !"></textarea>
+
+                <div class="btn-group">
+                    <button id="analyze-btn" class="btn-primary">
+                        <i class="fas fa-magic"></i> Analyser
+                    </button>
+                    <button id="clear-btn" class="btn-secondary">
+                        <i class="fas fa-trash"></i> Effacer
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3><i class="fas fa-history"></i> Historique</h3>
+                    <button id="clear-history-btn" class="clear-all-btn">
+                        <i class="fas fa-trash"></i> Tout effacer
+                    </button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <div class="history-item"><em>Chargement...</em></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="error-box" class="error">
+            <i class="fas fa-exclamation-triangle"></i> <span id="error-msg"></span>
+        </div>
+
+        <div id="result-card" class="card result-card">
+            <h2>Résultat</h2>
+            <div class="sentiment-emoji" id="sentiment-emoji">😐</div>
+            <div class="sentiment-label" id="sentiment-label">Neutre</div>
+            <div class="sentiment-score" id="sentiment-score">Confiance : 0%</div>
+            <div class="score-bar-container">
+                <div class="score-bar" id="score-bar"></div>
+            </div>
+            <div class="language-info" id="language-info">Langue détectée : inconnue</div>
+        </div>
+
+        <footer>
+            <p>Formats supportés : .txt, .pdf, .docx • Données stockées localement</p>
+            <a href="https://github.com/LOUGBEGNON/sentiment_analysis" target="_blank">Code source</a>
+        </footer>
     </div>
 
-    <!-- Résultat -->
-    <div id="error-box" class="error">
-      <i class="fas fa-exclamation-triangle"></i> <span id="error-msg"></span>
-    </div>
+    <script>
+        const inputText = document.getElementById('input-text');
+        const fileUpload = document.getElementById('file-upload');
+        const fileName = document.getElementById('file-name');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const errorBox = document.getElementById('error-box');
+        const errorMsg = document.getElementById('error-msg');
+        const resultCard = document.getElementById('result-card');
+        const sentimentEmoji = document.getElementById('sentiment-emoji');
+        const sentimentLabel = document.getElementById('sentiment-label');
+        const sentimentScore = document.getElementById('sentiment-score');
+        const scoreBar = document.getElementById('score-bar');
+        const languageInfo = document.getElementById('language-info');
+        const historyList = document.getElementById('history-list');
 
-    <div id="result-card" class="card result-card">
-      <h2>Résultat</h2>
-      <div class="sentiment-emoji" id="sentiment-emoji">😐</div>
-      <div class="sentiment-label" id="sentiment-label">Neutre</div>
-      <div class="sentiment-score" id="sentiment-score">Confiance : 0%</div>
-      <div class="language-info" id="language-info">Langue détectée : inconnue</div>
-    </div>
+        fileUpload.addEventListener('change', () => {
+            if (fileUpload.files.length > 0) {
+                const file = fileUpload.files[0];
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['txt', 'pdf', 'docx'].includes(ext)) {
+                    showError('Format non supporté. Veuillez choisir .txt, .pdf ou .docx.');
+                    fileUpload.value = '';
+                    fileName.textContent = 'Aucun fichier sélectionné';
+                    return;
+                }
+                fileName.textContent = file.name;
+            } else {
+                fileName.textContent = 'Aucun fichier sélectionné';
+            }
+        });
 
-    <!-- Historique -->
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h3><i class="fas fa-history"></i> Historique des analyses</h3>
-        <button id="clear-history-btn" class="btn-secondary" style="padding:0.5rem 1rem;font-size:0.85rem;">
-          <i class="fas fa-trash"></i> Tout effacer
-        </button>
-      </div>
-      <div id="history-list" class="history-list"></div>
-    </div>
+        function getEmoji(label) {
+            switch (label) {
+                case 'positive': return '😊';
+                case 'neutral': return '😐';
+                case 'negative': return '😞';
+                default: return '🤔';
+            }
+        }
 
-  </div>
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorBox.classList.add('show');
+            setTimeout(() => errorBox.classList.remove('show'), 5000);
+        }
 
-  <footer>
-    <p>✨ Application IA futuriste — propulsée par <a href="#">OpenAI</a></p>
-    <div class="footer-links">
-        <a href="https://github.com/yourusername/multilingual-sentiment-analysis-app" target="_blank" rel="noopener">
-            <i class="fab fa-github"></i> GitHub
-        </a>
-    </div>
-  </footer>
+        function renderHistory(history) {
+            historyList.innerHTML = '';
+            if (!Array.isArray(history) || history.length === 0) {
+                historyList.innerHTML = '<div class="history-item"><em>Aucun historique</em></div>';
+                return;
+            }
+            const recent = history.slice(-20).reverse();
+            recent.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                const lang = item.language === 'undetermined' ? '??' : (item.language || '??');
+                const displayText = item.text || item.full_text;
+                const emoji = getEmoji(item.label);
+                const sentimentClass = item.label === 'positive' ? 'positive' : item.label === 'neutral' ? 'neutral' : 'negative';
 
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+                div.innerHTML = `
+                    <div class="history-text" title="${displayText}">"${displayText.length > 50 ? displayText.substring(0,50) + '…' : displayText}"</div>
+                    <div class="history-meta">
+                        <span class="sentiment-tag ${sentimentClass}">${emoji} ${item.label.charAt(0).toUpperCase() + item.label.slice(1)}</span>
+                        <span class="lang-tag">${lang.toUpperCase()}</span>
+                    </div>
+                `;
+                historyList.appendChild(div);
+            });
+        }
+
+        async function loadHistory() {
+            try {
+                const res = await fetch('/history');
+                const data = await res.json();
+                renderHistory(data);
+            } catch (err) {
+                historyList.innerHTML = '<div class="history-item"><em>Erreur de chargement</em></div>';
+            }
+        }
+
+        analyzeBtn.addEventListener('click', async () => {
+            const text = inputText.value.trim();
+            const file = fileUpload.files[0];
+
+            if (!text && !file) {
+                return showError('Veuillez saisir du texte ou sélectionner un fichier.');
+            }
+
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyse...';
+
+            let response;
+            try {
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    response = await fetch('/analyze', { method: 'POST', body: formData });
+                } else {
+                    response = await fetch('/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text })
+                    });
+                }
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Échec de l’analyse');
+
+                sentimentEmoji.textContent = getEmoji(data.label);
+                sentimentLabel.textContent = data.label.charAt(0).toUpperCase() + data.label.slice(1);
+                sentimentScore.textContent = `Confiance : ${(data.score * 100).toFixed(1)}%`;
+                scoreBar.style.width = `${data.score * 100}%`;
+                const lang = data.language === 'undetermined' ? 'inconnue' : data.language || 'inconnue';
+                languageInfo.textContent = `Langue détectée : ${lang}`;
+                resultCard.classList.add('show');
+                loadHistory();
+
+            } catch (err) {
+                showError('Erreur : ' + err.message);
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<i class="fas fa-magic"></i> Analyser';
+            }
+        });
+
+        clearBtn.onclick = () => {
+            inputText.value = '';
+            fileUpload.value = '';
+            fileName.textContent = 'Aucun fichier sélectionné';
+            resultCard.classList.remove('show');
+        };
+
+        document.getElementById('clear-history-btn').onclick = () => {
+            if (!confirm("Voulez-vous vraiment effacer tout l’historique ?")) return;
+            fetch('/clear-history', { method: 'DELETE' })
+                .then(() => loadHistory())
+                .catch(() => showError('Échec de la suppression'));
+        };
+
+        loadHistory();
+    </script>
 </body>
 </html>

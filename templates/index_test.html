@@ -1,58 +1,145 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Multilingual Sentiment Analysis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <title>Analyseur de Sentiment IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --bg: #f8fafc;
-            --card: #ffffff;
+            --primary: #4f46e5;            /* Indigo */
+            --primary-light: #6c5ce7;
+            --bg: #ffffff;
+            --surface: #fafbff;
             --text: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            --success: #10b981;
-            --neutral: #94a3b8;
-            --warning: #f59e0b;
-            --danger: #ef4444;
+            --positive: #10b981;           /* Emerald */
+            --neutral: #f59e0b;            /* Amber */
+            --negative: #ef4444;           /* Red */
             --shadow: 0 4px 12px rgba(0,0,0,0.05);
-            --radius: 14px;
+            --radius: 16px;
+            --transition: all 0.3s ease;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
             color: var(--text);
-            padding: 2rem 1rem;
+            min-height: 100vh;
+            padding: 0;
             line-height: 1.6;
+            overflow-x: hidden;
         }
-        .container { max-width: 900px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 2.5rem; }
-        h1 { font-size: 2.25rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 0.5rem; }
-        .subtitle { color: var(--text-muted); font-size: 1.1rem; }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 1rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
 
-        .card { background: var(--card); padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow); }
-
-        label { display: block; font-weight: 600; margin-bottom: 0.75rem; }
-        textarea { 
-            width: 100%; 
-            height: 160px; 
-            padding: 1rem; 
-            border: 1px solid var(--border); 
-            border-radius: var(--radius); 
-            font-family: 'Inter', monospace; 
-            font-size: 1rem; 
-            resize: vertical;
+        header {
+            text-align: center;
             margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: var(--radius);
         }
-        .btn-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            color: var(--text);
+            resize: vertical;
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: inherit;
+            flex: 1;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
         button {
             padding: 0.75rem 1.25rem;
             border: none;
@@ -62,84 +149,253 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
+
         .btn-primary {
             background: var(--primary);
             color: white;
         }
-        .btn-primary:hover { background: var(--primary-dark); }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
         .btn-secondary {
             background: #f1f5f9;
             color: var(--text);
+            border: 1px solid var(--border);
         }
-        .btn-secondary:hover { background: #e2e8f0; }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
 
         .history-list {
-            max-height: 400px;
+            max-height: 100%;
             overflow-y: auto;
             display: flex;
             flex-direction: column-reverse;
+            flex: 1;
         }
+
         .history-item {
             padding: 1rem;
             border-bottom: 1px solid var(--border);
             font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .history-item:last-child { border: none; }
-        .history-text { font-style: italic; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .history-meta { display: flex; justify-content: space-between; margin-top: 0.25rem; font-size: 0.85rem; }
-        .lang-badge { background: #dbeafe; color: #1d4ed8; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.8rem; }
+
+        .history-item:last-child {
+            border: none;
+        }
+
+        .history-item:hover {
+            background: #f8fafc;
+            transform: translateX(5px);
+        }
+
+        .history-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .history-meta {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .sentiment-tag {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--positive);
+            border: 1px solid var(--positive);
+        }
+
+        .neutral {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--neutral);
+            border: 1px solid var(--neutral);
+        }
+
+        .negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--negative);
+            border: 1px solid var(--negative);
+        }
+
+        .lang-tag {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
 
         .result-card {
-            background: var(--card);
-            padding: 1.75rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-            margin-bottom: 2rem;
             display: none;
         }
-        .result-card.show { display: block; }
-        .sentiment-emoji { font-size: 3.5rem; margin: 0.5rem 0; }
-        .sentiment-label { font-size: 1.5rem; font-weight: 700; margin: 0.5rem 0; }
-        .sentiment-score { color: var(--text-muted); margin-bottom: 1rem; }
+
+        .result-card.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sentiment-emoji {
+            font-size: 4rem;
+            margin: 0.5rem 0;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .sentiment-label {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .sentiment-score {
+            color: var(--text-muted);
+            margin: 0.5rem 0 1rem;
+            font-size: 0.9rem;
+        }
+
+        .score-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .score-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--positive), var(--neutral), var(--negative));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
         .language-info {
-            background: #f0f9ff;
+            background: rgba(79, 70, 229, 0.05);
             padding: 0.5rem;
             border-radius: var(--radius);
             font-size: 0.95rem;
-            color: #0c4a6e;
+            color: var(--primary);
+            margin-top: 0.5rem;
         }
 
-        .error { 
-            background: #fee; 
-            color: var(--danger); 
-            padding: 1rem; 
-            border-radius: var(--radius); 
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--negative);
+            padding: 1rem;
+            border-radius: var(--radius);
             margin-bottom: 1.5rem;
             display: none;
+            border-left: 4px solid var(--negative);
         }
-        .error.show { display: block; }
 
-        footer { text-align: center; margin-top: 2rem; color: var(--text-muted); font-size: 0.9rem; }
-        footer a { color: var(--primary); text-decoration: none; }
+        .error.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            background: white;
+            border-radius: var(--radius);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .header-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .clear-all-btn {
+            background: none;
+            color: var(--negative);
+            border: 1px solid var(--negative);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .clear-all-btn:hover {
+            background: var(--negative);
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-brain"></i> Multilingual Sentiment Analysis</h1>
-            <p class="subtitle">Analyse de sentiment en plusieurs langues via OpenAI</p>
+            <h1><i class="fas fa-brain header-icon"></i> Analyseur de Sentiment IA</h1>
+            <p class="subtitle">Détection de sentiment en plusieurs langues</p>
         </header>
 
-        <div class="grid">
+        <div class="main-content">
             <div class="card">
                 <label for="input-text">Texte à analyser</label>
-                <textarea id="input-text" placeholder="Saisissez du texte en français, anglais, espagnol, chinois, etc."></textarea>
+                <textarea id="input-text" placeholder="Saisissez du texte en français, anglais, espagnol, etc."></textarea>
                 <div class="btn-group">
                     <button id="analyze-btn" class="btn-primary">
-                        <i class="fas fa-search"></i> Analyser
+                        <i class="fas fa-magic"></i> Analyser
                     </button>
                     <button id="clear-btn" class="btn-secondary">
                         <i class="fas fa-trash"></i> Effacer
@@ -147,11 +403,10 @@
                 </div>
             </div>
 
-            <!-- Dans la deuxième colonne, section historique -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3>Historique des analyses</h3>
-                    <button id="clear-history-btn" class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                    <h3><i class="fas fa-history"></i> Historique des analyses</h3>
+                    <button id="clear-history-btn" class="clear-all-btn">
                         <i class="fas fa-trash"></i> Tout effacer
                     </button>
                 </div>
@@ -165,16 +420,19 @@
             <i class="fas fa-exclamation-triangle"></i> <span id="error-msg"></span>
         </div>
 
-        <div id="result-card" class="result-card">
+        <div id="result-card" class="card result-card">
             <h2>Résultat</h2>
             <div class="sentiment-emoji" id="sentiment-emoji">😐</div>
-            <div class="sentiment-label" id="sentiment-label">Neutral</div>
+            <div class="sentiment-label" id="sentiment-label">Neutre</div>
             <div class="sentiment-score" id="sentiment-score">Confiance : 0%</div>
+            <div class="score-bar-container">
+                <div class="score-bar" id="score-bar"></div>
+            </div>
             <div class="language-info" id="language-info">Langue détectée : inconnue</div>
         </div>
 
         <footer>
-            <p>Langues supportées : 23+ • Analyse via OpenAI GPT-3.5 • Historique stocké localement</p>
+            <p>Langues supportées : 20+ • Données stockées localement • <a href="https://github.com/LOUGBEGNON/sentiment_analysis" target="_blank">Code source</a></p>
         </footer>
     </div>
 
@@ -188,142 +446,110 @@
         const sentimentEmoji = document.getElementById('sentiment-emoji');
         const sentimentLabel = document.getElementById('sentiment-label');
         const sentimentScore = document.getElementById('sentiment-score');
+        const scoreBar = document.getElementById('score-bar');
         const languageInfo = document.getElementById('language-info');
         const historyList = document.getElementById('history-list');
-    
-        // Charger l’historique depuis le serveur
-        async function loadHistoryFromServer() {
-            try {
-                const res = await fetch('/history');
-                const history = await res.json();
-                renderHistory(history);
-            } catch (err) {
-                console.warn('Impossible de charger l’historique:', err);
-                historyList.innerHTML = '<div class="history-item"><em>Historique indisponible</em></div>';
+
+        function getEmoji(label) {
+            switch (label) {
+                case 'positive': return '😊';
+                case 'neutral': return '😐';
+                case 'negative': return '😞';
+                default: return '🤔';
             }
         }
-    
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorBox.classList.add('show');
+            setTimeout(() => errorBox.classList.remove('show'), 5000);
+        }
+
         function renderHistory(history) {
             historyList.innerHTML = '';
             if (!Array.isArray(history) || history.length === 0) {
                 historyList.innerHTML = '<div class="history-item"><em>Aucun historique</em></div>';
                 return;
             }
-            // Afficher les plus récents en bas → on inverse l’ordre visuel
             const recent = history.slice(-20).reverse();
             recent.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'history-item';
                 const lang = item.language === 'undetermined' ? '??' : (item.language || '??');
                 const displayText = item.text || item.full_text;
+                const emoji = getEmoji(item.label);
+                const sentimentClass = item.label === 'positive' ? 'positive' : item.label === 'neutral' ? 'neutral' : 'negative';
+
                 div.innerHTML = `
                     <div class="history-text" title="${displayText}">"${displayText.length > 50 ? displayText.substring(0,50) + '…' : displayText}"</div>
                     <div class="history-meta">
-                        <span>${getEmoji(item.label)} ${capitalize(item.label)}</span>
-                        <span class="lang-badge">${lang.toUpperCase()}</span>
+                        <span class="sentiment-tag ${sentimentClass}">${emoji} ${item.label.charAt(0).toUpperCase() + item.label.slice(1)}</span>
+                        <span class="lang-tag">${lang.toUpperCase()}</span>
                     </div>
                 `;
                 historyList.appendChild(div);
             });
         }
-    
-        function getEmoji(label) {
-            switch (label) {
-                case 'very positive': case 'positive': return '😊';
-                case 'very negative': case 'negative': return '😞';
-                case 'neutral': return '😐';
-                default: return '🤔';
+
+        async function loadHistory() {
+            try {
+                const res = await fetch('/history');
+                const data = await res.json();
+                renderHistory(data);
+            } catch (err) {
+                historyList.innerHTML = '<div class="history-item"><em>Erreur de chargement</em></div>';
             }
         }
-    
-        function capitalize(str) {
-            return str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
-        }
-    
-        function showError(message) {
-            errorMsg.textContent = message;
-            errorBox.classList.add('show');
-            setTimeout(() => errorBox.classList.remove('show'), 5000);
-        }
-    
+
         analyzeBtn.addEventListener('click', async () => {
             const text = inputText.value.trim();
-            if (!text) {
-                showError('Veuillez saisir du texte.');
-                return;
-            }
+            if (!text) return showError('Veuillez entrer un texte.');
+
             analyzeBtn.disabled = true;
             analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyse...';
-    
+
             try {
-                const response = await fetch('/analyze', {
+                const res = await fetch('/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text })
                 });
-    
-                const data = await response.json();
-    
-                if (!response.ok) {
-                    throw new Error(data.message || 'Erreur inconnue');
-                }
-    
-                // Afficher résultat
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.message || 'Échec de l’analyse');
+
                 sentimentEmoji.textContent = getEmoji(data.label);
-                sentimentLabel.textContent = capitalize(data.label);
+                sentimentLabel.textContent = data.label.charAt(0).toUpperCase() + data.label.slice(1);
                 sentimentScore.textContent = `Confiance : ${(data.score * 100).toFixed(1)}%`;
-                const langDisplay = data.language === 'undetermined' ? 'inconnue' : data.language || 'inconnue';
-                languageInfo.textContent = `Langue détectée : ${langDisplay}`;
+                scoreBar.style.width = `${data.score * 100}%`;
+
+                const lang = data.language === 'undetermined' ? 'inconnue' : data.language || 'inconnue';
+                languageInfo.textContent = `Langue détectée : ${lang}`;
+
                 resultCard.classList.add('show');
-    
-                // Recharger l’historique
-                loadHistoryFromServer();
-    
+                loadHistory();
+
             } catch (err) {
                 showError('Erreur : ' + err.message);
             } finally {
                 analyzeBtn.disabled = false;
-                analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyser';
+                analyzeBtn.innerHTML = '<i class="fas fa-magic"></i> Analyser';
             }
         });
-    
-        clearBtn.addEventListener('click', () => {
+
+        clearBtn.onclick = () => {
             inputText.value = '';
             resultCard.classList.remove('show');
-            inputText.focus();
-        });
+        };
 
-        // Bouton pour effacer tout l’historique
-        document.getElementById('clear-history-btn').addEventListener('click', async () => {
-            if (!confirm("Voulez-vous vraiment supprimer tout l’historique ? Cette action est irréversible.")) {
-                return;
-            }
+        document.getElementById('clear-history-btn').onclick = () => {
+            if (!confirm("Voulez-vous vraiment effacer tout l’historique ? Cette action est irréversible.")) return;
+            fetch('/clear-history', { method: 'DELETE' })
+                .then(() => loadHistory())
+                .catch(() => showError('Échec de la suppression'));
+        };
 
-            try {
-                const response = await fetch('/clear-history', {
-                    method: 'DELETE'
-                });
-                const result = await response.json();
-
-                if (response.ok) {
-                    // Recharger l’historique (vide)
-                    loadHistoryFromServer();
-                    // Optionnel : afficher un petit message de succès
-                    showError(result.message); // réutilise la fonction existante pour afficher brièvement
-                    errorBox.style.backgroundColor = '#dcfce7';
-                    errorBox.style.color = '#065f46';
-                } else {
-                    throw new Error(result.message || 'Erreur inconnue');
-                }
-            } catch (err) {
-                showError('Erreur lors de la suppression : ' + err.message);
-                errorBox.style.backgroundColor = '#fee';
-                errorBox.style.color = '#dc2626';
-            }
-        });
-    
-        // Charger au démarrage
-        loadHistoryFromServer();
+        loadHistory();
     </script>
 </body>
 </html>
