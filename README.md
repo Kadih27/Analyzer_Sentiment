@@ -33,8 +33,8 @@ Welcome to the **Sentiment Analysis Web App**! This application analyzes the sen
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/LOUGBEGNON/sentiment_analysis.git
-   cd sentiment_analysis
+   git clone https://github.com/Kadih27/Analyzer_Sentiment.git
+   cd Analyzer_Sentiment
 
 
 2. **Install dependencies**:
@@ -90,9 +90,9 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For any inquiries, please reach out to the project maintainer:
 
-- **Name**: Amedee LOUGBEGNON
+- **Name**: Kadih BERTHE
 - **Email**: your.email@example.com
-- **GitHub**: [LOUGBEGNON](https://github.com/LOUGBEGNON)
+- **GitHub**: [Kadih](https://github.com/Kadih27)
 
 
 ## Screenshots
